@@ -50,6 +50,9 @@
 	"dependencies": {
 		"@auth/drizzle-adapter": "^1.11.1",
 		"@auth/sveltekit": "^1.11.0",
-		"postgres": "^3.4.7"
+		"@types/sortablejs": "^1.15.9",
+		"postgres": "^3.4.7",
+		"quill": "^2.0.3",
+		"sortablejs": "^1.15.6"
 	}
 }

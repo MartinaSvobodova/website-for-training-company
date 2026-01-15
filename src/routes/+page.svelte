@@ -8,6 +8,7 @@
 	{#each data.courses as course}
 		<Course id={course.id} title={course.title} image={course.image} price={course.price} isOwned={course.isOwned}></Course>
 	{/each}
+	<a href="/courses/createCourse" class="btn"> Add new course </a> 
 </div>
 
 <style>

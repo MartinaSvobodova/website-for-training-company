@@ -1,5 +1,5 @@
 import type { AdapterAccountType } from "@auth/core/adapters"
-import { pgTable, serial, integer, varchar, real, json, date, text, timestamp, primaryKey, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, serial, integer, varchar, real, json, date, text, timestamp, primaryKey, boolean, pgEnum } from 'drizzle-orm/pg-core';
 
 export const users = pgTable("user", {
   id: text("id")
@@ -124,11 +124,10 @@ export const order = pgTable('order', {
 	}
 );
 
-export const content = pgTable('content', {
+export const chapter = pgTable('chapter', {
 	id: serial('id').primaryKey().notNull(),
 	courseId: text("course_id").references(() => course.id).notNull(),
-	textContent: varchar("textContent"),
-	videoPath: varchar("videoPath"),
+	content: text("content"),
 	indexInCourse: integer("indexInCourse")
 	}
 );

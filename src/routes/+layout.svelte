@@ -32,7 +32,9 @@
 	<header class="font-size-2rem <lg:flex-col flex flex-row justify-between">
 		<div class="text-xl font-medium text-black dark:text-white flex flex-row justify-center">Company name here</div>
 	</header>
-	<main></main>
+	<main>
+		{@render children()}
+	</main>
 	<footer class="flex flex-row">
 		<div class="justify-start">Contact</div>
 		<div class="grow"></div>
@@ -46,5 +48,3 @@
 		margin: 0;
 	}
 </style>
-
-{@render children()}
