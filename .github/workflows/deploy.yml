@@ -6,7 +6,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-push:
@@ -18,6 +17,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      # --- NEW STEP: FORCE LOWERCASE ---
+      - name: Lowercase Repository Name
+        run: |
+          echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
 
       - name: Log in to the Container registry
         uses: docker/login-action@v3
@@ -31,6 +37,7 @@ jobs:
         with:
           context: .
           push: true
+          # Use the new lowercase env variable here
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
   deploy-to-server:
@@ -48,19 +55,17 @@ jobs:
           username: github-user
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd /opt/website/
+            cd /opt/website
             
-            # Export the repository name so docker-compose can use it
-            export GITHUB_REPOSITORY=${{ github.repository }}
+            # --- FIX ON SERVER SIDE AS WELL ---
+            # We must convert it to lowercase here too so Docker Pull works
+            REPO_NAME="${{ github.repository }}"
+            export GITHUB_REPOSITORY=$(echo "$REPO_NAME" | tr '[:upper:]' '[:lower:]')
             
-            # Login to GHCR (using the token provided by the Action)
+            # Login
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             
-            # Pull the new image
+            # Pull and Up
             docker compose pull
-            
-            # Restart services (recreates containers only if image changed)
             docker compose up -d --remove-orphans
-            
-            # Cleanup unused images to save space
             docker image prune -f
