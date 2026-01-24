@@ -5,7 +5,7 @@
 
 <div class="flex flex-row border-2 border-black m-4">
     <div>
-        {image}
+        Image here
     </div>
     <div>
         {title}
