@@ -7,7 +7,7 @@
 </script>
 <div>
 	{#each data.courses as course}
-		<Course id={course.id} title={course.title} image={course.image} price={course.price} isOwned={course.isOwned}></Course>
+		<Course id={course.id} title={course.title} image={course.image} price={course.price} isOwned={course.isOwned} description={course.shortDescription}></Course>
 	{/each}
 	{#if data.isAdmin}
 		<form method="POST" action="?/addCourse" use:enhance>
