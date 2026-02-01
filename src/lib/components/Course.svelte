@@ -36,7 +36,7 @@
                         Open
                     </a>
                 {:else}
-                    <form action="/purchase/{id}" method="POST">
+                    <form action="/purchase/{id}">
                         <button type="submit" class="btn variant-filled-secondary font-bold shadow-md">
                             Buy Now
                         </button>
@@ -47,33 +47,3 @@
 
     </div>
 </div>
-<!--
-<script lang="ts">
-    let { id, title, image, price, isOwned } = $props();
-</script>
-
-<div class="flex flex-row border-2 border-black m-4">
-    <div>
-        Image here
-    </div>
-    <div>
-        {title}
-    </div>
-    {#if !isOwned}
-        <div>
-            Price: {price}
-        </div>
-    {/if}
-    <div>
-        {#if isOwned}
-            <form action="/courses/"{id}>
-                <button>Go to course</button>
-            </form>
-        {:else}
-            <form action="/purchase/"{id}>
-                <button>Buy course</button>
-            </form>
-        {/if}
-    </div>
-</div>
--->

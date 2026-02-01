@@ -19,6 +19,8 @@
 		"db:studio": "drizzle-kit studio"
 	},
 	"devDependencies": {
+		"@auth/drizzle-adapter": "^1.11.1",
+		"@auth/sveltekit": "^1.11.0",
 		"@eslint/compat": "^1.4.0",
 		"@eslint/js": "^9.36.0",
 		"@skeletonlabs/skeleton": "^4.8.0",
@@ -31,28 +33,29 @@
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.1.17",
 		"@types/node": "^22",
+		"@types/sortablejs": "^1.15.9",
 		"drizzle-kit": "^0.31.8",
 		"drizzle-orm": "^0.44.7",
 		"eslint": "^9.36.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.12.4",
 		"globals": "^16.4.0",
+		"postgres": "^3.4.7",
 		"prettier": "^3.6.2",
 		"prettier-plugin-svelte": "^3.4.0",
 		"prettier-plugin-tailwindcss": "^0.7.2",
+		"quill": "^2.0.3",
+		"quill-resize-module": "^2.0.8",
 		"sass-embedded": "^1.96.0",
+		"sortablejs": "^1.15.6",
 		"svelte": "^5.39.5",
 		"svelte-check": "^4.3.2",
 		"tailwindcss": "^4.1.17",
 		"typescript": "^5.9.2",
 		"typescript-eslint": "^8.44.1",
-		"vite": "^7.1.7",
-		"@auth/drizzle-adapter": "^1.11.1",
-		"@auth/sveltekit": "^1.11.0",
-		"@types/sortablejs": "^1.15.9",
-		"postgres": "^3.4.7",
-		"quill": "^2.0.3",
-		"quill-resize-module": "^2.0.8",
-		"sortablejs": "^1.15.6"
+		"vite": "^7.1.7"
+	},
+	"dependencies": {
+		"stripe": "^20.2.0"
 	}
 }

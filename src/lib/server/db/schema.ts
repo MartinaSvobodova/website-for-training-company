@@ -127,7 +127,7 @@ export const order = pgTable('order', {
 	companyId: uuid("company_id").references(() => company.id),
 	courseId: uuid("course_id").references(() => course.id).notNull(),
 	invoiceId: integer("invoice_id").references(() => invoice.id),
-	paymentStatus: varchar('paymentStatus').notNull()
+	paymentStatus: boolean().notNull()
 	}
 );
 
