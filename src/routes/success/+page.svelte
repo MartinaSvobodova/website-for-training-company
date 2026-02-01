@@ -7,11 +7,12 @@
 
     async function checkStatus() {
         if (!orderId) return;
-
-        const response = await fetch(`/api/checkOrder?id=${orderId}`);
+        const response = await fetch(`/api/checkOrder?id=${orderId}&t=${Date.now()}`);
         const data = await response.json();
-        console.log("DB Status:", data.status);
-        if (data.status === true) { 
+
+        console.log("DB Value:", data.status, "| Type:", typeof data.status);
+
+        if (data.status === true || data.status === "true" || data.status === "Paid" || data.status === 1) { 
             status = "Payment Successful!";
             return true; 
         } else {
