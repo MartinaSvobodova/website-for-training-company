@@ -15,6 +15,10 @@
 
 <link rel="icon" href={logo} />
 
+<div class="bg-yellow-400 text-black text-center text-sm font-semibold py-1">
+    This site is currently in development
+</div>
+
 <div class="min-h-screen mx-4 flex flex-col relative">
     
     <nav class="flex flex-row items-center justify-between p-2 mt-4 preset-outlined-surface-200-800 rounded-container-token"> 
@@ -37,6 +41,7 @@
                         <div slot="submitButton" class="btn preset-filled-primary-500 font-medium">Sign in</div>
                     </SignIn>
                 {:else}
+                    <a href="/account/{data.session.user?.id}" class="btn text-base px-4 hover:variant-soft-primary"> Account </a>
                     <SignOut>
                         <div slot="submitButton" class="btn preset-filled-primary-500 font-medium">Sign out</div>
                     </SignOut>
@@ -92,47 +97,3 @@
         margin: 0;
     }
 </style>
-<!--
-<link rel="icon" href={logo} />
-
-
-<div class="min-h-100vh mx-1em flex flex-col">
-	<nav class="btn-group flex flex-row preset-outlined-surface-200-800">
-		<a href="/" class="btn justify-self-start preset-outlined-primary-500"> Home </a>
-		<a href="/about" class="btn justify-self-start preset-outlined-primary-500"> About </a>
-		<a href="/testimonials" class="btn justify-self-start preset-outlined-primary-500">
-			Testimonials
-		</a>
-		<a href="/contact" class="btn justify-self-start preset-outlined-primary-500"> Contact </a>
-		<div class="flex grow flex-row justify-end">
-			{#if !data.session}
-				<SignIn>
-					<div slot="submitButton" class="buttonPrimary">Sign in</div>
-				</SignIn>
-			{:else}
-				<SignOut>
-					<div slot="submitButton" class="buttonPrimary">Sign out</div>
-				</SignOut>
-			{/if}
-		</div>
-	</nav>
-	<header class="font-size-2rem <lg:flex-col flex flex-row justify-between">
-		<div class="text-xl font-medium text-black dark:text-white flex flex-row justify-center">Company name here</div>
-	</header>
-	<main>
-		{@render children()}
-	</main>
-	<footer class="flex flex-row">
-		<div class="justify-start">Contact</div>
-		<div class="grow"></div>
-		<a href="mailto:a@a.com" class="justify-end">email</a>
-	</footer>
-</div>
-
-<style lang="scss">
-	:global(body) {
-		padding: 0;
-		margin: 0;
-	}
-</style>
--->

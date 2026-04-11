@@ -61,3 +61,15 @@ export const actions: Actions = {
         }
     }
 };
+
+
+
+//getCourseDb
+    //ts file?
+    //seems kinda pointless
+    // Model.gerCourses
+    // Model.addCourse
+    // Model.updateCourse - there you check for auth
+    // but also buisness logic he said
+    //Model.checkifUSer is logged in
+    //but wouldnt that just be moving this to a different file
