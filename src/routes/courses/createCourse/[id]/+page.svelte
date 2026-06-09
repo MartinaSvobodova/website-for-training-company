@@ -3,7 +3,6 @@
 	import { onMount } from "svelte";
 	import type { PageProps } from "./$types";
 	import { enhance } from "$app/forms";
-	import { updated } from "$app/state";
 
 	let sortable_element: HTMLElement;
 	let { data }: PageProps = $props();
@@ -19,15 +18,72 @@
     let currentChapterId = $state(data.information.chapters[0]?.chapterId || "");
     let selectedChapterContent = $state(data.information.sChContent || "");
 
-	let courseName = $state("");
-    let coursePrice = $state(0);
+	let courseName = $state(data.information.course?.title ?? "");
+    let coursePrice = $state(data.information.course?.price ?? 0);
+	let shortDescription = $state(data.information.course?.shortDescription ?? "");
 	let courseImage = $state<FileList>();
+	let autosaveStatus = $state<"idle" | "saving" | "saved" | "error">("idle");
+	let autosaveTimer: ReturnType<typeof setTimeout>;
+
+	const initialCourseSignature = JSON.stringify({
+		title: data.information.course?.title ?? "",
+		price: data.information.course?.price ?? 0,
+		shortDescription: data.information.course?.shortDescription ?? "",
+		image: data.information.course?.image ?? ""
+	});
+
+	let lastSavedCourseSignature = $state(initialCourseSignature);
 
 	let isPublishable = $derived(
         courseName.trim().length > 0 && 
         coursePrice > 0 && 
         courseImage && courseImage.length > 0
     );
+
+	const autosaveSignature = $derived(
+		JSON.stringify({
+			title: courseName,
+			price: coursePrice,
+			shortDescription,
+			image: courseImage?.[0]?.name ?? data.information.course?.image ?? ""
+		})
+	);
+
+	$effect(() => {
+		if (autosaveSignature === lastSavedCourseSignature) {
+			return;
+		}
+
+		clearTimeout(autosaveTimer);
+		autosaveTimer = setTimeout(async () => {
+			autosaveStatus = "saving";
+			const formData = new FormData();
+			formData.append('courseName', courseName);
+			formData.append('coursePrice', String(coursePrice));
+			formData.append('shortDescription', shortDescription);
+
+			if (courseImage && courseImage.length > 0) {
+				formData.append('courseImage', courseImage[0]);
+			}
+
+			const response = await fetch('?/autoSaveCourseInfo', {
+				method: 'POST',
+				body: formData
+			});
+
+			if (!response.ok) {
+				autosaveStatus = "error";
+				return;
+			}
+
+			lastSavedCourseSignature = autosaveSignature;
+			autosaveStatus = "saved";
+		}, 700);
+
+		return () => {
+			clearTimeout(autosaveTimer);
+		};
+	});
 
 	onMount(async ()=>{
 		const {Sortable} = await import("sortablejs");
@@ -51,6 +107,7 @@
 	function preparePublishData({ formData }) {
         formData.append('courseName', courseName);
         formData.append('coursePrice', coursePrice.toString());
+	formData.append('shortDescription', shortDescription);
         
         // Append the actual file object
         if (courseImage && courseImage.length > 0) {
@@ -130,14 +187,31 @@
   class="text-black"
   bind:value={coursePrice}/>
 
+<label for="shortDescription">Short description</label>
+
+<textarea
+	id="shortDescription"
+	name="shortDescription"
+	class="text-black"
+	rows="3"
+	bind:value={shortDescription}
+/>
+
   <label for="image">Course image</label>
 
   <input
   type="file"
   id="image"
   name="image"
-  required
   bind:files={courseImage}/>
+
+{#if autosaveStatus === "saving"}
+	<p>Saving course details...</p>
+{:else if autosaveStatus === "saved"}
+	<p>Course details saved.</p>
+{:else if autosaveStatus === "error"}
+	<p>Unable to save course details right now.</p>
+{/if}
 
 
 <div class="flex flex-row">

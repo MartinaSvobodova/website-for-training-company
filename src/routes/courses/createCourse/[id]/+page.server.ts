@@ -6,6 +6,16 @@ import { redirect } from "@sveltejs/kit";
 
 export const load: PageServerLoad = async ({params}) => {
     console.log(params.id);
+    const courseFromDb = await db
+        .select({
+            title: course.title,
+            price: course.price,
+            image: course.image,
+            shortDescription: course.shortDescription
+        })
+        .from(course)
+        .where(eq(course.id, params.id));
+
     let chaptersFromDb = await db.select({
         chapterId: chapter.id,
         content: chapter.content, 
@@ -20,6 +30,7 @@ export const load: PageServerLoad = async ({params}) => {
             chapters: chaptersFromDb,
             numberOfChapters: chaptersFromDb.length,
             courseId: params.id,
+            course: courseFromDb[0] ?? null,
             sChContent: chaptersFromDb[0]?.content ?? ""
         }
     };
@@ -110,17 +121,75 @@ export const actions: Actions = {
             return { success: false };
         }
     },
+    autoSaveCourseInfo: async ({ request, params }) => {
+        const data = await request.formData();
+        const rawName = data.get('courseName');
+        const rawPrice = data.get('coursePrice');
+        const rawShortDescription = data.get('shortDescription');
+        const uploadedImage = data.get('courseImage');
+
+        const updateValues: {
+            title?: string;
+            price?: number;
+            shortDescription?: string;
+            image?: string;
+        } = {};
+
+        if (typeof rawName === 'string') {
+            updateValues.title = rawName;
+        }
+
+        if (typeof rawShortDescription === 'string') {
+            updateValues.shortDescription = rawShortDescription;
+        }
+
+        if (typeof rawPrice === 'string' && rawPrice.length > 0) {
+            const parsedPrice = Number(rawPrice);
+            if (!Number.isNaN(parsedPrice)) {
+                updateValues.price = parsedPrice;
+            }
+        }
+
+        if (uploadedImage instanceof File && uploadedImage.size > 0) {
+            updateValues.image = uploadedImage.name;
+        }
+
+        if (Object.keys(updateValues).length === 0) {
+            return { success: true };
+        }
+
+        await db.update(course)
+            .set(updateValues)
+            .where(eq(course.id, params.id));
+
+        return { success: true };
+    },
     publishCourse: async ({ request, params }) => {
         const data = await request.formData();
         const name = data.get('courseName') as string;
         const price = Number(data.get('coursePrice'));
+        const shortDescription = (data.get('shortDescription') as string) ?? '';
         const image = data.get('courseImage') as File;
+
+        const publishData: {
+            title: string;
+            price: number;
+            shortDescription: string;
+            isPublished: boolean;
+            image?: string;
+        } = {
+            title: name,
+            price: price,
+            shortDescription,
+            isPublished: true
+        };
+
+        if (image && image.size > 0) {
+            publishData.image = image.name;
+        }
+
         await db.update(course)
-                .set({
-                    title: name,
-                    price: price,
-                    image: image.name,
-                    isPublished: true})
+                .set(publishData)
                 .where(eq(course.id, params.id));
         throw redirect(303, `/`);
     }

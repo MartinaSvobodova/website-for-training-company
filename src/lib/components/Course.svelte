@@ -3,9 +3,9 @@
     let { id, title, image, price, isOwned, description } = $props();
 </script>
 
-<div class="card overflow-hidden flex flex-col md:flex-row shadow-lg hover:shadow-xl transition-shadow my-4 mx-auto max-w-sm md:max-w-none">
+<div class="card min-w-0 overflow-hidden shadow-lg transition-shadow hover:shadow-xl">
     
-    <header class="w-full aspect-video md:aspect-auto md:w-72 md:h-auto shrink-0 relative">
+    <header class="relative w-full aspect-video shrink-0">
         <img 
             src={placeholderImage} 
             alt={title} 
@@ -13,17 +13,17 @@
         />
         </header>
 
-    <div class="p-4 md:p-6 flex flex-col justify-between w-full gap-4">
+    <div class="flex min-w-0 flex-col gap-4 p-4 md:p-6">
         
-        <div>
-            <h3 class="h3 font-bold leading-tight">{title}</h3>
-            <p class="opacity-70 mt-2 text-base line-clamp-3">{description}</p>
+        <div class="min-w-0">
+            <h3 class="h3 wrap-break-word font-bold leading-tight">{title || "Untitled Course"}</h3>
+            <p class="mt-2 course-description wrap-break-word text-base opacity-70">{description || "No description yet."}</p>
         </div>
 
-        <div class="flex items-center justify-between pt-4 border-t border-surface-500/30 mt-auto gap-4">
+        <div class="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-surface-500/30 pt-4">
             
             {#if !isOwned}
-                <div class="text-xl font-bold text-primary-500 whitespace-nowrap">
+                <div class="max-w-full wrap-break-word text-xl font-bold text-primary-500">
                     {price} CZK
                 </div>
             {:else}
@@ -47,3 +47,13 @@
 
     </div>
 </div>
+
+<style>
+    .course-description {
+        overflow: hidden;
+        display: -webkit-box;
+        line-clamp: 3;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+</style>

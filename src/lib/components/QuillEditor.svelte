@@ -18,6 +18,20 @@
     let editor: HTMLDivElement;
     let timer: ReturnType<typeof setTimeout>;
 
+	const scheduleSave = () => {
+		if (!quill || quill.isUpdatingSilently) return;
+
+		clearTimeout(timer);
+		const idToSave = chapterId;
+		const htmlToSave = quill.root.innerHTML;
+
+		timer = setTimeout(() => {
+			if (idToSave === chapterId) {
+				onAutoSave(htmlToSave, idToSave);
+			}
+		}, 300);
+	};
+
     $effect(() => {
         // We track chapterId. When it changes, we update the editor.
         const currentId = chapterId; 
@@ -96,18 +110,19 @@
 				const url = await uploadToCDN(file);
 
 				if (isImage) {
-					quill.insertEmbed(range.index, 'image', url);
+					quill.insertEmbed(range.index, 'image', url, 'user');
 				} else {
-					quill.insertEmbed(range.index, 'video-file', url);
+					quill.insertEmbed(range.index, 'video-file', url, 'user');
 				}
 				quill.setSelection(range.index + 1);
+				scheduleSave();
 			} catch (e) {
 				console.error("Upload failed", e);
 			}
 		}
 
 		// 3. Initialize Quill
-		let quill = new Quill(editor, {
+		quill = new Quill(editor, {
 			modules: {
 				toolbar: {
 					container: toolbarOptions,
@@ -118,14 +133,14 @@
 							input.type = 'file';
 							input.accept = 'image/*';
 							input.click();
-							input.onchange = () => input.files[0] && processFile(input.files[0]);
+							input.onchange = () => input.files?.[0] && processFile(input.files[0]);
 						},
 						video: () => {
 							const input = document.createElement('input');
 							input.type = 'file';
 							input.accept = 'video/*';
 							input.click();
-							input.onchange = () => input.files[0] && processFile(input.files[0]);
+							input.onchange = () => input.files?.[0] && processFile(input.files[0]);
 						}
 					}
 				},
@@ -163,17 +178,9 @@
         }
 
         quill.on('text-change', (delta, oldDelta, source) => {
-            if (source === 'user' && !quill.isUpdatingSilently) {
-                clearTimeout(timer);
-                const idToSave = chapterId;
-                const htmlToSave = quill.root.innerHTML;
-
-                timer = setTimeout(() => {
-                    if (idToSave === chapterId) {
-                        onAutoSave(htmlToSave, idToSave);
-                    }
-                }, 1000);
-            }
+			if (source !== 'silent') {
+				scheduleSave();
+			}
         });
 
 		// --- 4. THE FIX: PASTE LISTENER WITH CAPTURE ---
